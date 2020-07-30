@@ -13,11 +13,16 @@ import {renderWithRouter, generate} from 'til-client-test-utils'
 import {init as initAPI} from '../utils/api'
 import App from '../app'
 
+//auth strategy uses the local storage
+//we want to make sure that we are not authenticated before registration
 beforeEach(() => {
   window.localStorage.removeItem('token')
+  //mock a request
   axiosMock.__mock.reset()
   initAPI()
 })
+
+//when you have integration TESTS you have to initialize the app, load some sort of Data
 
 test('register a new user', async () => {
   const {
