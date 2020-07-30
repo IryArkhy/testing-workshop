@@ -1,21 +1,32 @@
 // using helpful utilities
 import React from 'react'
-import ReactDOM from 'react-dom'
 // you'll need these:
-// import {generate} from 'til-client-test-utils'
-// import {render, Simulate} from 'react-testing-library'
+import {generate} from 'til-client-test-utils'
+import {render, Simulate} from 'react-testing-library'
 // note that til-client-test-utils is found in `client/test/til-client-test-utils`
 import Login from '../login'
 
 test('calls onSubmit with the username and password when submitted', () => {
   // Arrange
   // use generate.loginForm() here
+  /*
   const fakeUser = {username: 'chucknorris', password: '(╯°□°）╯︵ ┻━┻'}
   const handleSubmit = jest.fn()
+  */
+  //NEW:
+  const fakeUser = generate.loginForm() // {username: 'random', password: 'random'}
+  const handleSubmit = jest.fn()
   // use: render(<Login onSubmit={handleSubmit} />)
+  const {container, getByLabelText, getByText} = render(
+    <Login onSubmit={handleSubmit} />,
+  )
+
   // It'll give you back an object with
   // `getByLabelText` and `getByText` functions
+  // getByLabelText --> to get a form controle that is labeled. It looks for all <lable/> that have text that you specify. When it finds one --> it checks the htmlFor and finds the <input/> that has the same ID. Another way: it looks for id of lable and the same value on aria-labelledby atribute on the input
+  //getByText returns an <lable/> element itself.
   // so you don't need a div anymore!
+  /*
   const div = document.createElement('div')
   ReactDOM.render(<Login onSubmit={handleSubmit} />, div)
 
@@ -27,12 +38,27 @@ test('calls onSubmit with the username and password when submitted', () => {
 
   usernameNode.value = fakeUser.username
   passwordNode.value = fakeUser.password
+  */
+  // console.log(getByLabelText('Username'));//HTMLInputEl
+  // getByLabelText('Username').value = fakeUser.username;
+  // getByLabelText('Password').value = fakeUser.password;
 
+  //-----OR------
+  const usernameNode = getByLabelText('Username')
+  const passwordNode = getByLabelText('Password')
+  const formNode = container.querySelector('form')
+  const submitButtonNode = getByText('Submit')
+
+  usernameNode.value = fakeUser.username
+  passwordNode.value = fakeUser.password
   // Act
   // Use Simulate.submit(formNode) instead of these two lines
+  /*
   const event = new window.Event('submit')
   formNode.dispatchEvent(event)
+  */
 
+  Simulate.submit(formNode)
   // Assert
   // no change necessary here
   expect(handleSubmit).toHaveBeenCalledTimes(1)
